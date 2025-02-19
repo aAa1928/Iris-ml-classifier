@@ -25,7 +25,7 @@ def graph(epochs, losses):
     plt.ylabel('Loss/Error')
     plt.xlabel('Epoch')
     plt.savefig('loss_plot.png')
-    plt.show()
+    plt.show(block=True)
 
 torch.manual_seed(392)
 
@@ -55,6 +55,7 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
 epochs = 200
 losses = []
+print('Training...')
 for i in range(epochs):
     y_pred = model.forward(X_train)
 
@@ -69,12 +70,15 @@ for i in range(epochs):
     loss.backward()
     optimizer.step()
 
+print('\n')
+
 graph(epochs, losses)
 
 with torch.no_grad():
   y_eval = model.forward(X_test)
   loss = criterion(y_eval, y_test)
 
+print(f'Testing...')
 correct = 0
 with torch.no_grad():
     for i, y in enumerate(X_test):
@@ -86,3 +90,5 @@ with torch.no_grad():
             correct += 1
 
 print(f'{correct}/30 correct!')
+
+torch.save(model.state_dict(), 'iris_model.pth')
